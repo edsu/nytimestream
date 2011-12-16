@@ -1,0 +1,10 @@
+{
+    "name": "times_stream",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+      "express": "latest",
+      "socket.io": "latest",
+      "underscore": "latest"
+  }
+}
