@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 var _ = require('underscore');
 var http = require("http");
 var express = require("express");
