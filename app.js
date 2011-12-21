@@ -103,8 +103,15 @@ app.get('/stream/', function(req, res) {
 });
 
 // setup socket.io
-//
 io = socketio.listen(app);
+
+// heroku recommends xhr-polling
+if (process.env.HEROKU) {
+  app.configure(function() {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+  });
+}
 
 io.sockets.on('connection', function(socket) {
   console.log("adding socket");
