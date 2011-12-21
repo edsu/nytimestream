@@ -95,7 +95,7 @@ io.sockets.on('connection', function(socket) {
 });
 
 // start up the server
-app.listen(app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3000);
 
 // start polling for new stories
 poll(publish);
