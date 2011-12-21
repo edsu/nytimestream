@@ -1,4 +1,6 @@
-// initialize some things
+/**
+ * nytimestream
+ */
 
 var _ = require('underscore'),
     http = require('http'),
@@ -84,6 +86,10 @@ function publish(story) {
   });
 }
 
+/**
+ * a function to keep the chunked response alive
+ */
+
 function heartbeat() {
   _.each(streams, function(stream) {
     stream.write("\n");
@@ -91,14 +97,16 @@ function heartbeat() {
   setTimeout(heartbeat, heartbeat_timeout);
 }
 
-// configure the app
+/**
+ * configure the app
+ */
 
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 });
 
-// this is a simple stream of json
-
+// add a route for a simple chunked stream of json
+// for demonstration purposes with curl
 app.get('/stream/', function(req, res) {
   console.log("adding stream");
   res.write(JSON.stringify(process.env));
@@ -113,17 +121,8 @@ app.get('/stream/', function(req, res) {
   setTimeout(heartbeat, heartbeat_timeout);
 });
 
-// setup socket.io
+// setup socket.io streaming
 io = socketio.listen(app);
-
-// heroku recommends xhr-polling
-if (process.env.HEROKU) {
-  app.configure(function() {
-    io.set("transports", ["xhr-polling"]);
-    io.set("polling duration", 10);
-  });
-}
-
 io.sockets.on('connection', function(socket) {
   console.log("adding socket");
   _.each(latest, function(s) {
@@ -136,8 +135,16 @@ io.sockets.on('connection', function(socket) {
   });
 });
 
+// currently heroku recommends xhr-polling only
+if (process.env.HEROKU) {
+  app.configure(function() {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+  });
+}
+
 // start up the server
 app.listen(process.env.PORT || 3000);
 
-// start polling for new stories
+// and start polling for new stories!
 poll(publish);
