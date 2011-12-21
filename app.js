@@ -91,6 +91,7 @@ app.configure(function(){
 
 app.get('/stream/', function(req, res) {
   console.log("adding stream");
+  res.write(JSON.stringify(process.env));
   _.each(latest, function(n) {
     res.write(JSON.stringify(n) + "\n");
   });
@@ -102,8 +103,9 @@ app.get('/stream/', function(req, res) {
 });
 
 // setup socket.io
-
+//
 io = socketio.listen(app);
+
 io.sockets.on('connection', function(socket) {
   console.log("adding socket");
   _.each(latest, function(s) {
