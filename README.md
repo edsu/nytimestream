@@ -8,6 +8,9 @@
 
 ```
 
+About
+-----
+
 nytimestream is a demonstration of using [node.js](http://nodejs.org) and 
 [socket.io](http://socket.io) to create a web based push stream for breaking 
 New York Times stories using the 
