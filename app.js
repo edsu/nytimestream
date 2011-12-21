@@ -118,7 +118,6 @@ app.get('/stream/', function(req, res) {
     console.log("removing stream");
     streams = _.without(streams, res);
   });
-  setTimeout(heartbeat, heartbeat_timeout);
 });
 
 // setup socket.io streaming
@@ -148,3 +147,6 @@ app.listen(process.env.PORT || 3000);
 
 // and start polling for new stories!
 poll(publish);
+
+// set heartbeat going for chunked responses
+setTimeout(heartbeat, heartbeat_timeout);
