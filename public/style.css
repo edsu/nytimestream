@@ -21,6 +21,10 @@ hgroup h2 a {
     color: blue;
 }
 
+hgroup h2 code {
+    font-family: Courier;
+}
+
 section {
 }
 
