@@ -8,6 +8,7 @@ var _ = require('underscore'),
 var nytimes_key = process.env.NYTIMES_KEY,
     app = express.createServer(),
     poll_interval = process.env.POLL_TIME || 1000 * 60,
+    heartbeat_timeout = 1000 * 30,
     seen = [],
     latest = [],
     sockets = [],
@@ -83,11 +84,20 @@ function publish(story) {
   });
 }
 
+function heartbeat() {
+  _.each(streams, function(stream) {
+    stream.write("\n");
+  });
+  setTimeout(heartbeat, heartbeat_timeout);
+}
+
 // configure the app
 
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 });
+
+// this is a simple stream of json
 
 app.get('/stream/', function(req, res) {
   console.log("adding stream");
@@ -100,6 +110,7 @@ app.get('/stream/', function(req, res) {
     console.log("removing stream");
     streams = _.without(streams, res);
   });
+  setTimeout(heartbeat, heartbeat_timeout);
 });
 
 // setup socket.io
