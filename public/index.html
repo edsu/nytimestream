@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>times-live</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/underscore-min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+    <script type="text/javascript">
+    $(document).ready(main);
+
+    var articleTemplate = _.template('<article class="story"><header><a href="<%= url %>"><%= headline %></a></header><p class="summary"><%= summary %></p><footer><%= byline %> - <%= created %></footer></article>');
+     
+    function main() {
+      var socket = io.connect();
+      socket.on('connect', function() {
+        socket.on('story', function(story) {
+          addStory(story);
+          removeOld();
+          fadeList();
+        });
+      });
+    }
+
+    function addStory(story) {
+      var article = $(articleTemplate(story));
+      article.hide();
+      var headlines = $("#headlines");
+      headlines.prepend(article);
+      article.slideDown();
+    }
+
+    function removeOld() {
+      $(".story").last().fadeOut('slow', function() {
+        $(this).detach();
+      });
+    }
+
+    function fadeList() {
+      var opacity = 1.0;
+      $(".story").each(function(i, n) {
+        $(n).css("opacity", opacity);
+        opacity -= 0.1;
+      });
+    }
+
+    </script>
+    </head>
+    <body>
+        <section id="headlines">
+        </section>
+    </body>
+</html>

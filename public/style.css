@@ -1,0 +1,46 @@
+body {
+    font-family: Neuton, Times New Roman;
+    font-size: 12pt;
+    margin-top: 30px;
+}
+
+section {
+    list-style: none;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+article {
+    padding-bottom: 15px;
+}
+
+a { 
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    font-weight: bold;
+}
+
+img.thumb {
+    margin-right: 10px;
+    float: left;
+    height: 30px;
+    border: thin solid gray; 
+}
+
+p.summary {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+header {
+  font-size: 18pt;
+}
+
+footer {
+  font-size 10pt;
+  font-style: italic;
+}

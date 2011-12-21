@@ -1,37 +1,43 @@
-var _ = require('underscore');
-var http = require("http");
-var express = require("express");
+// initialize some things
 
-var nytimes_key = process.env.NYTIMES_KEY
-var server = express.createServer();
-var poll_interval = 1000 * 60 * 10;
-var seen = []
-var streams = [];
+var _ = require('underscore'),
+    http = require('http'),
+    express = require('express'),
+    socketio = require('socket.io');
 
-function home(req, res) {
-  nytimes(function(json) {
-    res.contentType('application/json');
-    res.send(json);
-  });
-}
+var nytimes_key = process.env.NYTIMES_KEY,
+    app = express.createServer(),
+    poll_interval = 1000 * 60,
+    seen = [],
+    latest = [],
+    streams = [];
 
-function poll() {
-  nytimes(function(json) {
-    var update = JSON.parse(json);
-    _.each(update.results.reverse(), function(i) {
+/**
+ * look for new stories
+ *
+ * @param {Function} a callback that receives a new story
+ */
+
+function poll(f) {
+  console.log("polling for new stories");
+  nytimes(function(news) {
+    _.each(news, function(i) {
       if (! _.include(seen, i.url)) {
-        console.log("found " + i.headline);
+        f(i);
         seen.push(i.url);
         // to avoid memory bloat, only remember last 1000 urls
         seen = _.last(seen, 1000);
       }
     });
   });
-  setTimeout(poll, poll_interval);
+  setTimeout(poll, poll_interval, f);
 };
 
-function publish() {
-}
+/**
+ * fetch new stories from the NYTimes API
+ *
+ * @param {Function} a callback that receives current stories
+ */
 
 function nytimes(f) {
   options = {
@@ -44,13 +50,52 @@ function nytimes(f) {
       json += chunk;
     });
     res.on('end', function() {
-      if (res.statusCode == 200) f(json);
+      if (res.statusCode == 200) {
+        times = JSON.parse(json);
+        latest = times.results.reverse().slice(10);
+        f(latest);
+      }
     });
   }).on('error', function(e) {
     console.log("error: " + e);
   });
 }
 
-poll();
-server.get('/', home);
-server.listen(3000);
+/**
+ * publish new story to any open streams
+ * 
+ * @param {Object} a news story
+ */
+
+function publish(story) {
+  _.each(streams, function(stream) {
+    stream.emit('story', story);
+  });
+}
+
+// configure the app
+
+app.configure(function(){
+  app.use(express.static(__dirname + '/public'));
+});
+
+// setup socket.io
+
+io = socketio.listen(app);
+io.sockets.on('connection', function(socket) {
+  console.log("adding socket");
+  _.each(latest, function(s) {
+    socket.emit('story', s);
+  });
+  streams.push(socket);
+  socket.on('disconnect', function() {
+    console.log("removing socket");
+    streams = _.without(streams, socket);
+  });
+});
+
+// start up the server
+app.listen(3000);
+
+// start polling for new stories
+poll(publish);
