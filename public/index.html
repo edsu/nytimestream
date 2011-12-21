@@ -9,6 +9,9 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
     <script type="text/javascript">
+
+    // the JavaScript is left inline so you can quickly see how little there is to do
+
     $(document).ready(main);
 
     var articleTemplate = _.template('<article class="story"><header><a href="<%= url %>"><%= headline %></a></header><p class="summary"><%= summary %></p><footer><%= byline %> - <%= created %></footer></article>');
@@ -49,12 +52,18 @@
     </script>
     </head>
     <body>
+        <!-- github banner -->
+        <a href="http://github.com/edsu/nytimestream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
+
+        <!-- header -->
         <hgroup>
             <h1>nytimestream</h1>
-            <h2>A stream based view of the <a href="http://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku">New York Times Wire API</a></h2>
+            <h2>A stream based view of the <a href="http://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku">New York Times Wire API</a> using <a href="http://nodejs.org">Node.js</a>, <a href="http://socket.io">socket.io</a> and a free <a href="http://heroko.com">Heroku</a> account.</h2>
         </hgroup>
-        <a href="http://github.com/edsu/nytimestream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
+
+        <!-- the headlines -->
         <section id="headlines">
         </section>
+
     </body>
 </html>

@@ -2,13 +2,26 @@ body {
     font-family: Neuton, Times New Roman;
     font-size: 12pt;
     margin-top: 30px;
-}
-
-section {
-    list-style: none;
     width: 60%;
     margin-left: auto;
     margin-right: auto;
+}
+
+hgroup h1 {
+    font-size: 20pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+hgroup h2 {
+    font-size: 12pt;
+}
+
+hgroup h2 a {
+    color: blue;
+}
+
+section {
 }
 
 article {
