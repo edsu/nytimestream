@@ -1,16 +1,19 @@
 About
 -----
 
-nytimestream is a demonstration of using [node.js](http://nodejs.org) and 
-[socket.io](http://socket.io) to create a web based push stream for breaking 
+nytimestream is a demonstration of using [Node.js](http://nodejs.org) and 
+[Socket.IO](http://socket.io) to create a web based push stream for breaking 
 New York Times stories using the 
 [Times Newswire API](http://developer.nytimes.com/docs/times_newswire_api). 
 
 Since the Times Newswire API is oriented around an HTTP client polling for new
-stories, nytimestream needs to poll for updates. However nytimestream can poll
+stories, nytimestream also needs to poll for updates. However nytimestream can poll
 *once*, and when a new update is found it is pushed to however many clients have 
 subscribed for updates. Compare this to a more traditional scenario where all the 
-browser clients need to poll either the nytimes api directly, or a proxy for the api.
+browser clients need to poll either the nytimes api directly, or a proxy for the
+API. nytimestream significantly lowers the amount of traffic going to the Times 
+Newswire API, since Node.js is able to keep lots of open network connections to clients 
+that are waiting for updates.
 
 Setup
 -----
