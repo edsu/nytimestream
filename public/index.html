@@ -8,10 +8,10 @@
     <script type="text/javascript" src="/underscore-min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
+    <!-- the JavaScript for the client side app is left inline to show how
+    little is involved -->
+
     <script type="text/javascript">
-
-    // the JavaScript is left inline so you can quickly see how little there is to do
-
     $(document).ready(main);
 
     var articleTemplate = _.template('<article class="story"><header><a href="<%= url %>"><%= headline %></a></header><p class="summary"><%= summary %></p><footer><%= byline %> - <%= created %></footer></article>');
@@ -50,6 +50,20 @@
     }
 
     </script>
+
+    <!-- google analytics, you may want to remove this -->
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-16871278-5']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
     </head>
     <body>
         <!-- github banner -->
