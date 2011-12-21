@@ -7,9 +7,10 @@ var _ = require('underscore'),
 
 var nytimes_key = process.env.NYTIMES_KEY,
     app = express.createServer(),
-    poll_interval = 1000 * 60,
+    poll_interval = process.env.POLL_TIME || 1000 * 60,
     seen = [],
     latest = [],
+    sockets = [],
     streams = [];
 
 /**
@@ -44,6 +45,7 @@ function nytimes(f) {
     "host": "api.nytimes.com",
     "path": "/svc/news/v2/all/recent.json?api-key=" + nytimes_key
   };
+  console.log("http://" + options.host + options.path);
   http.get(options, function(res) {
     var json = "";
     res.on('data', function(chunk) {
@@ -51,6 +53,7 @@ function nytimes(f) {
     });
     res.on('end', function() {
       if (res.statusCode == 200) {
+        console.log(json);
         times = JSON.parse(json);
         latest = times.results.reverse().slice(10);
         f(latest);
@@ -62,14 +65,21 @@ function nytimes(f) {
 }
 
 /**
- * publish new story to any open streams
+ * publish new story to any open sockets or streams
  * 
  * @param {Object} a news story
  */
 
 function publish(story) {
+  // publish to socket.io sockets
+  console.log("publishing to " + sockets.length + " sockets");
+  _.each(sockets, function(socket) {
+    socket.emit('story', story);
+  });
+  // publish to raw http responses
+  console.log("publishing to " + streams.length + " streams");
   _.each(streams, function(stream) {
-    stream.emit('story', story);
+    stream.write(JSON.stringify(story) + "\n");
   });
 }
 
@@ -77,6 +87,18 @@ function publish(story) {
 
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
+});
+
+app.get('/stream/', function(req, res) {
+  console.log("adding stream");
+  _.each(latest, function(n) {
+    res.write(JSON.stringify(n) + "\n");
+  });
+  streams.push(res);
+  req.on('end', function() {
+    console.log("removing stream");
+    streams = _.without(streams, res);
+  });
 });
 
 // setup socket.io
@@ -87,10 +109,10 @@ io.sockets.on('connection', function(socket) {
   _.each(latest, function(s) {
     socket.emit('story', s);
   });
-  streams.push(socket);
+  sockets.push(socket);
   socket.on('disconnect', function() {
     console.log("removing socket");
-    streams = _.without(streams, socket);
+    sockets = _.without(sockets, socket);
   });
 });
 
